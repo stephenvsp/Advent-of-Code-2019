@@ -8,8 +8,8 @@ i = 0
 while(intCode[i] != 99):
 
     operation = intCode[i]
-    val1 = intCode[i + 1]
-    val2 = intCode[i + 2]
+    val1 = intCode[intCode[i + 1]]
+    val2 = intCode[intCode[i + 2]]
     outputPosition = intCode[i + 3]
 
     if (operation == 1):
@@ -19,4 +19,4 @@ while(intCode[i] != 99):
 
     i += 4
 
-print(intCode)
+print(intCode[0])
