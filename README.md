@@ -15,3 +15,7 @@
 ## p2 part 2 ans
 
 2254
+
+## p3 part 3 ans
+
+1285
