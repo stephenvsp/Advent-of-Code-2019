@@ -63,8 +63,57 @@ def calculateIntCode(intCode):
 
         #print out position
         elif (operation == 4):
-            print(intCode[intCode[i + 1]])
+            val1 = getValue(intCode, intCode[i + 1], firstParamMode)
+            print(val1)
 
             i += 2
+        
+        #jump if true
+        elif (operation == 5):
+            val1 = getValue(intCode, intCode[i + 1], firstParamMode)
+            val2 = getValue(intCode, intCode[i + 2], secondParamMode)
+
+            if (val1 != 0):
+                i = val2
+            else:
+                i += 3
+        
+        #jump if false
+        elif (operation == 6):
+            val1 = getValue(intCode, intCode[i + 1], firstParamMode)
+            val2 = getValue(intCode, intCode[i + 2], secondParamMode)
+
+            if (val1 == 0):
+                i = val2
+            else: 
+                i += 3
+
+        #less than
+        elif (operation == 7):
+            val1 = getValue(intCode, intCode[i + 1], firstParamMode)
+            val2 = getValue(intCode, intCode[i + 2], secondParamMode)
+            outputPosition = intCode[i + 3]
+
+            if (val1 < val2):
+                intCode[outputPosition] = 1
+            else:
+                intCode[outputPosition] = 0
+
+            i += 4
+        
+        #equals
+        elif (operation == 8):
+            val1 = getValue(intCode, intCode[i + 1], firstParamMode)
+            val2 = getValue(intCode, intCode[i + 2], secondParamMode)
+            outputPosition = intCode[i + 3]
+
+            if (val1 == val2):
+                intCode[outputPosition] = 1
+            else:
+                intCode[outputPosition] = 0
+
+            i += 4
+
+        
 
 calculateIntCode(intCode)
