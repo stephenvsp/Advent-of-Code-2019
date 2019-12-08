@@ -41,7 +41,7 @@ def parseInstruction(pos, instruction):
 
     positions = []
 
-    for i in range(0, numMoves):
+    for _ in range(0, numMoves):
         pos = move(pos, direction)
         positions.append(pos)
 
