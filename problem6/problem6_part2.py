@@ -52,8 +52,8 @@ similarNodes = list(set(youParents) & set(santaParents))
 
 deepestSimilarNode = max(similarNodes, key=lambda item: orbitMap[item][0])
 
-distanceFromYouToSanta = orbitMap['YOU'][0] - orbitMap[deepestSimilarNode][0] + \
-    orbitMap['SAN'][0] - orbitMap[deepestSimilarNode][0]
+distanceFromYouToSanta = orbitMap['YOU'][0] + \
+    orbitMap['SAN'][0] - (orbitMap[deepestSimilarNode][0] * 2)
 
 # subtract two because its actually distance from you's and santa's parents
 print(distanceFromYouToSanta - 2)
