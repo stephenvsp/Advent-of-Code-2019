@@ -45,7 +45,7 @@ def calculateIntCode(intCode):
         elif (operation == 2):
             val1 = getValue(intCode, intCode[i + 1], firstParamMode)
             val2 = getValue(intCode, intCode[i + 2], secondParamMode)
-            outputPosition = intCode[i+3]
+            outputPosition = intCode[i + 3]
 
             intCode[outputPosition] = val1 * val2
 
@@ -67,4 +67,4 @@ def calculateIntCode(intCode):
 
             i += 2
 
-print(calculateIntCode(intCode))
+calculateIntCode(intCode)
