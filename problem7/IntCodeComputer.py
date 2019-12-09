@@ -62,8 +62,9 @@ def runIntCode(intCode, inputs):
 
         # print out position
         elif (operation == 4):
-            val1 = getValue(intCode, intCode[i + 1], firstParamMode)
-            return val1
+            output = getValue(intCode, intCode[i + 1], firstParamMode)
+
+            i += 2
 
         # jump if true
         elif (operation == 5):
@@ -110,3 +111,5 @@ def runIntCode(intCode, inputs):
                 intCode[outputPosition] = 0
 
             i += 4
+
+    return output
