@@ -23,7 +23,7 @@ def getValue(intCode, param, mode):
 
 # if feedback loops is enabled then we want to return None
 def runIntCode(intCode, inputs, feedbackLoop=False, pc=0):
-     pc = pc
+    pc = pc
     output = 0
 
     while pc < len(intCode):
