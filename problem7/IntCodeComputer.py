@@ -21,8 +21,9 @@ def getValue(intCode, param, mode):
         return param
 
 
+# if feedback loops is enabled then we want to return None
 def runIntCode(intCode, inputs, feedbackLoop=False, pc=0):
-    pc = pc
+     pc = pc
     output = 0
 
     while pc < len(intCode):
@@ -30,22 +31,13 @@ def runIntCode(intCode, inputs, feedbackLoop=False, pc=0):
         secondParamMode, firstParamMode, operation = parseOpcode(intCode[pc])
 
         # addition
-        if (operation == 1):
+        if operation == 1 or operation == 2:
             val1 = getValue(intCode, intCode[pc + 1], firstParamMode)
             val2 = getValue(intCode, intCode[pc + 2], secondParamMode)
             outputPosition = intCode[pc + 3]
 
-            intCode[outputPosition] = val1 + val2
-
-            pc += 4
-
-        # multiplication
-        elif (operation == 2):
-            val1 = getValue(intCode, intCode[pc + 1], firstParamMode)
-            val2 = getValue(intCode, intCode[pc + 2], secondParamMode)
-            outputPosition = intCode[pc + 3]
-
-            intCode[outputPosition] = val1 * val2
+            intCode[outputPosition] = val1 + \
+                val2 if operation == 1 else val1 * val2
 
             pc += 4
 
@@ -114,6 +106,7 @@ def runIntCode(intCode, inputs, feedbackLoop=False, pc=0):
 
             pc += 4
 
+        # halt program
         elif (operation == 99):
             if feedbackLoop:
                 return output, None
