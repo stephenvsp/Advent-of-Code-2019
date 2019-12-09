@@ -14,23 +14,27 @@ testOrder2 = [9,7,8,5,6]
 testProgram2 = 3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10
 #ans = 18216
 
+def runWithPhaseSetting(program, phaseSetting):
+    programs, pcs, inputs = [], [], []
+    num_amps = len(phaseSetting)
+    amp_output = 0
+
+    for i in range(0, num_amps):
+        programs.append(program.copy())
+        pcs.append(0)
+        inputs.append([phaseSetting[i]])
+    
+    while pcs[0] is not None:
+        for i in range(0, num_amps):
+            inputs[i].append(amp_output)
+            amp_output, pc = runIntCode(programs[i], inputs[i], True, pcs[i])
+            pcs[i] = pc
+    return inputs[0][0]
+
+maxThruster = 0
 
 for order in thrusterOrder:
 
-    maxPower = 0
-    #first thrusters's input is 0
-    result = 0
-    lastResult = 0
-    
-    while(result != -1):
+    maxThruster = max(maxThruster, runWithPhaseSetting(program, order))
 
-        for thrusterNumber in order:
-            result = runIntCode(testProgram1, [thrusterNumber, result])
-
-        if (result != -1):
-            lastResult = result
-
-    if lastResult > maxPower:
-        maxPower = lastResult
-
-print(maxPower)
+print(maxThruster)
