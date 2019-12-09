@@ -24,6 +24,7 @@ def getValue(intCode, param, mode):
 def runIntCode(intCode, inputs):
     numInputToRead = 0
     i = 0
+    output = -1
 
     while(intCode[i] != 99):
 

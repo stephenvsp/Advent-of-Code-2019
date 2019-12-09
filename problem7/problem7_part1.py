@@ -7,11 +7,12 @@ program = [3,8,1001,8,10,8,105,1,0,0,21,30,47,60,81,102,183,264,345,426,99999,3,
 thrusterOrder = list(itertools.permutations([0,1,2,3,4]))
 
 maxPower = 0
+#initial input 
 
 for order in thrusterOrder:
 
-    #first program's input is 0
     result = 0
+    #first program's input is 0
 
     for thrusterNumber in order:
         result = runIntCode(program, [thrusterNumber, result])
