@@ -25,7 +25,7 @@ flatPicture = ''
 for pixel in decodedPicture:
     flatPicture += pixel
 
-flatPicture.replace('0', " ")
+flatPicture = flatPicture.replace('0', " ")
 
 formattedPicture = [flatPicture[i:i + width]
                     for i in range(0, len(flatPicture), width)]
