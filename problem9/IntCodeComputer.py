@@ -11,29 +11,36 @@ def parseOpcode(opcode):
     return secondParamMode, firstParamMode, operation
 
 
-def getValue(intCode, param, mode):
+def get_value(intCode, param, mode, relative_base):
 
     # 0 for position mode
-    if(mode == 0):
+    if mode == 0:
         return intCode[param]
     # 1 for immediate mode
-    else:
+    elif mode == 1:
         return param
+    else:
+        return intCode[param + relative_base]
+
+        # if feedback loops is enabled then we want to return None
 
 
-# if feedback loops is enabled then we want to return None
-def runIntCode(intCode, inputs, feedbackLoop=False, pc=0):
+def run_program(intCode, inputs=[], feedbackLoop=False, pc=0):
     pc = pc
     output = 0
+
+    relative_base = 0
 
     while pc < len(intCode):
 
         secondParamMode, firstParamMode, operation = parseOpcode(intCode[pc])
 
-        # addition
+        #1 - addition, 2 - multiplication
         if operation == 1 or operation == 2:
-            val1 = getValue(intCode, intCode[pc + 1], firstParamMode)
-            val2 = getValue(intCode, intCode[pc + 2], secondParamMode)
+            val1 = get_value(
+                intCode, intCode[pc + 1], firstParamMode, relative_base)
+            val2 = get_value(
+                intCode, intCode[pc + 2], secondParamMode, relative_base)
             outputPosition = intCode[pc + 3]
 
             intCode[outputPosition] = val1 + \
@@ -41,49 +48,63 @@ def runIntCode(intCode, inputs, feedbackLoop=False, pc=0):
 
             pc += 4
 
-        # read from input and write to position
+        # 3 - read from input and write to position
         elif (operation == 3):
             writeTo = intCode[pc + 1]
 
             val = inputs.pop(0)
 
+            if (writeTo > len(intCode) - 1):
+                neededSpace = writeTo - len(intCode) - 1
+
+                extraSpace = [0 for i in range(0, neededSpace)]
+
+                intCode.extend(extraSpace)
+
             intCode[writeTo] = int(val)
 
             pc += 2
 
-        # print out position
+        # 4 - print out position
         elif (operation == 4):
-            output = getValue(intCode, intCode[pc + 1], firstParamMode)
+            output = get_value(
+                intCode, intCode[pc + 1], firstParamMode, relative_base)
 
             pc += 2
 
             if feedbackLoop:
                 return output, pc
 
-        # jump if true
+        # 5 - jump if true
         elif (operation == 5):
-            val1 = getValue(intCode, intCode[pc + 1], firstParamMode)
-            val2 = getValue(intCode, intCode[pc + 2], secondParamMode)
+            val1 = get_value(
+                intCode, intCode[pc + 1], firstParamMode, relative_base)
+            val2 = get_value(
+                intCode, intCode[pc + 2], secondParamMode, relative_base)
 
             if (val1 != 0):
                 pc = val2
             else:
                 pc += 3
 
-        # jump if false
+        # 6 - jump if false
         elif (operation == 6):
-            val1 = getValue(intCode, intCode[pc + 1], firstParamMode)
-            val2 = getValue(intCode, intCode[pc + 2], secondParamMode)
+            val1 = get_value(
+                intCode, intCode[pc + 1], firstParamMode, relative_base)
+            val2 = get_value(
+                intCode, intCode[pc + 2], secondParamMode, relative_base)
 
             if (val1 == 0):
                 pc = val2
             else:
                 pc += 3
 
-        # less than
+        # 7 - less than
         elif (operation == 7):
-            val1 = getValue(intCode, intCode[pc + 1], firstParamMode)
-            val2 = getValue(intCode, intCode[pc + 2], secondParamMode)
+            val1 = get_value(
+                intCode, intCode[pc + 1], firstParamMode, relative_base)
+            val2 = get_value(
+                intCode, intCode[pc + 2], secondParamMode, relative_base)
             outputPosition = intCode[pc + 3]
 
             if (val1 < val2):
@@ -93,10 +114,12 @@ def runIntCode(intCode, inputs, feedbackLoop=False, pc=0):
 
             pc += 4
 
-        # equals
+        #8 - equals
         elif (operation == 8):
-            val1 = getValue(intCode, intCode[pc + 1], firstParamMode)
-            val2 = getValue(intCode, intCode[pc + 2], secondParamMode)
+            val1 = get_value(
+                intCode, intCode[pc + 1], firstParamMode, relative_base)
+            val2 = get_value(
+                intCode, intCode[pc + 2], secondParamMode, relative_base)
             outputPosition = intCode[pc + 3]
 
             if (val1 == val2):
@@ -106,7 +129,16 @@ def runIntCode(intCode, inputs, feedbackLoop=False, pc=0):
 
             pc += 4
 
-        # halt program
+        # 9 - change relative base
+        elif (operation == 9):
+            val1 = get_value(
+                intCode, intCode[pc + 1], firstParamMode, relative_base)
+
+            relative_base += val1
+
+            pc += 2
+
+        # 99 - halt program
         elif (operation == 99):
             if feedbackLoop:
                 return output, None
