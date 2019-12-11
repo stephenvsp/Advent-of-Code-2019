@@ -42,22 +42,12 @@ def run_program(int_code, inputs=[], pc=0):
         op, modes = parse_opcode(int_code[pc])
 
         # 1 - addition
-        if op == 1:
+        if op == 1 or op == 2:
             val1 = get_value(pc + 1, modes[0])
             val2 = get_value(pc + 2, modes[1])
             output_position = get_location(pc + 3, modes[2])
 
-            int_code[output_position] = val1 + val2
-
-            increment = 4
-
-        # 2 - multiplication
-        elif op == 2:
-            val1 = get_value(pc + 1, modes[0])
-            val2 = get_value(pc + 2, modes[1])
-            output_position = get_location(pc + 3, modes[2])
-
-            int_code[output_position] = val1 * val2
+            int_code[output_position] = val1 + val2 if op == 1 else val1 * val2
 
             increment = 4
 
