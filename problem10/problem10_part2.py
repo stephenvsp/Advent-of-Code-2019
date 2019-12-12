@@ -58,13 +58,13 @@ y = 13
 while(asteroids_left(asteroid_map)):
     # GO UP
     curr_x = x
-    curr_y = y + 1
+    curr_y = y - 1
     while (is_inbounds(curr_x, curr_y)):
         if asteroid_map[curr_x][curr_y] == '#':
             destroyed_asteroids.append((curr_x, curr_y))
             asteroid_map[curr_x][curr_y] = '.'
             break
-        curr_y += 1
+        curr_y -= 1
 
     # go through slopes
     # right side of map
@@ -73,17 +73,17 @@ while(asteroids_left(asteroid_map)):
         rise = slope[1]
 
         if slope[2] > 0:
-            # go up positive slopes
-            curr_x = x + run
-            curr_y = y + rise
+            # go down positive ones
+            curr_x = x - run
+            curr_y = y - rise
 
             while(is_inbounds(curr_x, curr_y)):
                 if asteroid_map[curr_x][curr_y] == '#':
                     destroyed_asteroids.append((curr_x, curr_y))
                     asteroid_map[curr_x][curr_y] = '.'
                     break
-                curr_x += run
-                curr_y += rise
+                curr_x -= run
+                curr_y -= rise
 
         elif slope[2] == 0:
             # go right
@@ -112,13 +112,13 @@ while(asteroids_left(asteroid_map)):
 
     # go down
     curr_x = x
-    curr_y = y - 1
+    curr_y = y + 1
     while (is_inbounds(curr_x, curr_y)):
         if asteroid_map[curr_x][curr_y] == '#':
             destroyed_asteroids.append((curr_x, curr_y))
             asteroid_map[curr_x][curr_y] = '.'
             break
-        curr_y -= 1
+        curr_y += 1
 
     # left side of map
     for slope in slopes:
@@ -126,17 +126,17 @@ while(asteroids_left(asteroid_map)):
         rise = slope[1]
 
         if (slope[2] > 0):
-            # go down positive ones
-            curr_x = x - run
-            curr_y = y - rise
+            # go up positive slopes
+            curr_x = x + run
+            curr_y = y + rise
 
             while(is_inbounds(curr_x, curr_y)):
                 if asteroid_map[curr_x][curr_y] == '#':
                     destroyed_asteroids.append((curr_x, curr_y))
                     asteroid_map[curr_x][curr_y] = '.'
                     break
-                curr_x -= run
-                curr_y -= rise
+                curr_x += run
+                curr_y += rise
 
         elif (slope[2] == 0):
             # go left
