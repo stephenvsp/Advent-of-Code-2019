@@ -116,7 +116,7 @@ def search_for_asteroids(x, y):
                 curr_x += run
                 curr_y += rise
 
-            # go up the slope
+            # go down the slope
             curr_x = x - run
             curr_y = y - rise
 
