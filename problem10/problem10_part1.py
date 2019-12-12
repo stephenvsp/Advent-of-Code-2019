@@ -13,15 +13,33 @@ max_y = len(asteroid_map)
 asteroid_map = [[asteroid_map[y][x]
                  for y in range(0, max_y)] for x in range(0, max_x)]
 
-slopes = []
+positive_x_positive_y_slopes = []
+positive_x_negative_y_slopes = []
+negative_x_positive_y_slopes = []
+negative_x_negative_y_slopes = []
 slopeDict = {}
 
 for x in range(1, max_x):
     for y in range(1, max_y):
         if (x / y) not in slopeDict.keys():
-            slopes.append((x, y))
-            slopes.append((-x, y))
+            positive_x_positive_y_slopes.append((x, y))
+            positive_x_negative_y_slopes.append((x, -y))
+            negative_x_positive_y_slopes.append((-x, y))
+            negative_x_negative_y_slopes.append((-x, -y))
             slopeDict[x / y] = True
+
+
+def search_slope(run, rise, start_x, start_y):
+
+    curr_x = start_x + run
+    curr_y = start_y + rise
+    while (is_inbounds(curr_x, curr_y)):
+        if asteroid_map[curr_x][curr_y] == '#':
+            return 1
+        curr_x += run
+        curr_y += rise
+
+    return 0
 
 
 def is_inbounds(my_x, my_y):
@@ -39,93 +57,28 @@ def search_for_asteroids(x, y):
     count = 0
 
     # up
-    curr_x = x
-    curr_y = y + 1
-    while (is_inbounds(curr_x, curr_y)):
-        if asteroid_map[curr_x][curr_y] == '#':
-            count += 1
-            break
-        curr_y += 1
+    count += search_slope(0, 1, x, y)
 
     # down
-    curr_x = x
-    curr_y = y - 1
-    while (is_inbounds(curr_x, curr_y)):
-        if asteroid_map[curr_x][curr_y] == '#':
-            count += 1
-            break
-        curr_y -= 1
+    count += search_slope(0, -1, x, y)
 
     # left
-    curr_x = x - 1
-    curr_y = y
-    while (is_inbounds(curr_x, curr_y)):
-        if asteroid_map[curr_x][curr_y] == '#':
-            count += 1
-            break
-        curr_x -= 1
+    count += search_slope(-1, 0, x, y)
 
     # right
-    curr_x = x + 1
-    curr_y = y
-    while (is_inbounds(curr_x, curr_y)):
-        if asteroid_map[curr_x][curr_y] == '#':
-            count += 1
-            break
-        curr_x += 1
+    count += search_slope(1, 0, x, y)
 
-    for slope in slopes:
-        run = slope[0]
-        rise = slope[1]
+    for slope in positive_x_positive_y_slopes:
+        count += search_slope(slope[0], slope[1], x, y)
 
-        # slope is positive
-        if rise / run > 0:
+    for slope in positive_x_negative_y_slopes:
+        count += search_slope(slope[0], slope[1], x, y)
 
-            # go up the slope
-            curr_x = x + run
-            curr_y = y + rise
+    for slope in negative_x_positive_y_slopes:
+        count += search_slope(slope[0], slope[1], x, y)
 
-            while(is_inbounds(curr_x, curr_y)):
-                if asteroid_map[curr_x][curr_y] == '#':
-                    count += 1
-                    break
-                curr_x += run
-                curr_y += rise
-
-            # go down the slope
-            curr_x = x - run
-            curr_y = y - rise
-
-            while(is_inbounds(curr_x, curr_y)):
-                if asteroid_map[curr_x][curr_y] == '#':
-                    count += 1
-                    break
-                curr_x -= run
-                curr_y -= rise
-
-        # slope is negative
-        else:
-            # go up the slope
-            curr_x = x + run
-            curr_y = y + rise
-
-            while(is_inbounds(curr_x, curr_y)):
-                if asteroid_map[curr_x][curr_y] == '#':
-                    count += 1
-                    break
-                curr_x += run
-                curr_y += rise
-
-            # go down the slope
-            curr_x = x - run
-            curr_y = y - rise
-
-            while(is_inbounds(curr_x, curr_y)):
-                if asteroid_map[curr_x][curr_y] == '#':
-                    count += 1
-                    break
-                curr_x -= run
-                curr_y -= rise
+    for slope in negative_x_negative_y_slopes:
+        count += search_slope(slope[0], slope[1], x, y)
 
     return count
 

@@ -1,11 +1,12 @@
 import math
 
 # strip \n's out of strings
-# asteroid_map = ['###..#########.#####.', '.####.#####..####.#.#', '.###.#.#.#####.##..##', '##.####.#.###########', '###...#.####.#.#.####', '#.##..###.########...', '#.#######.##.#######.', '.#..#.#..###...####.#', '#######.##.##.###..##', '#.#......#....#.#.#..','######.###.#.#.##...#', '####.#...#.#######.#.', '.######.#####.#######', '##.##.##.#####.##.#.#', '###.#######..##.#....', '###.##.##..##.#####.#', '##.########.#.#.#####', '.##....##..###.#...#.', '#..#.####.######..###', '..#.####.############', '..##...###..#########']
+asteroid_map = ['###..#########.#####.', '.####.#####..####.#.#', '.###.#.#.#####.##..##', '##.####.#.###########', '###...#.####.#.#.####', '#.##..###.########...', '#.#######.##.#######.', '.#..#.#..###...####.#', '#######.##.##.###..##', '#.#......#....#.#.#..',
+                '######.###.#.#.##...#', '####.#...#.#######.#.', '.######.#####.#######', '##.##.##.#####.##.#.#', '###.#######..##.#....', '###.##.##..##.#####.#', '##.########.#.#.#####', '.##....##..###.#...#.', '#..#.####.######..###', '..#.####.############', '..##...###..#########']
 
 # test map
-asteroid_map = ['.#..##.###...#######', '##.############..##.', '.#.######.########.#', '.###.#######.####.#.', '#####.##.#.##.###.##', '..#####..#.#########', '####################', '#.####....###.#.#.##', '##.#################', '#####.##.###..####..',
-                '..######..##.#######', '####.##.####...##..#', '.#####..#.######.###', '##...#.##########...', '#.##########.#######', '.####.#.###.###.#.##', '....##.##.###..#####', '.#.#.###########.###', '#.#.#.#####.####.###', '###.##.####.##.#..##']
+# asteroid_map = ['.#..##.###...#######', '##.############..##.', '.#.######.########.#', '.###.#######.####.#.', '#####.##.#.##.###.##', '..#####..#.#########', '####################', '#.####....###.#.#.##', '##.#################', '#####.##.###..####..',
+#                '..######..##.#######', '####.##.####...##..#', '.#####..#.######.###', '##...#.##########...', '#.##########.#######', '.####.#.###.###.#.##', '....##.##.###..#####', '.#.#.###########.###', '#.#.#.#####.####.###', '###.##.####.##.#..##']
 
 max_x = len(asteroid_map[0])
 max_y = len(asteroid_map)
@@ -14,21 +15,36 @@ max_y = len(asteroid_map)
 asteroid_map = [[asteroid_map[y][x]
                  for y in range(0, max_y)] for x in range(0, max_x)]
 
-slopes = []
+positive_x_positive_y_slopes = []
+positive_x_negative_y_slopes = []
+negative_x_positive_y_slopes = []
+negative_x_negative_y_slopes = []
 slopeDict = {}
 
 for x in range(1, max_x):
     for y in range(1, max_y):
-        if (y / x) not in slopeDict.keys():
-            slopes.append((x, y, y / x))
-            slopes.append((-x, y, -y / x))
-            slopeDict[y / x] = True
+        if (x / y) not in slopeDict.keys():
+            positive_x_positive_y_slopes.append((x, y, x / y))
+            positive_x_negative_y_slopes.append((x, -y, x / -y))
+            negative_x_positive_y_slopes.append((-x, y, -x / y))
+            negative_x_negative_y_slopes.append((-x, -y, - x / -y))
+            slopeDict[x / y] = True
 
 
-slopes.append((1, 0, 0))
+destroyed_asteroids = []
 
-# the order of slopes the astroid destroyer will go through
-slopes = sorted(slopes, key=lambda x: -x[2])
+
+def search_slope(run, rise, start_x, start_y):
+
+    curr_x = start_x + run
+    curr_y = start_y + rise
+    while (is_inbounds(curr_x, curr_y)):
+        if asteroid_map[curr_x][curr_y] == '#':
+            return (curr_x, curr_y)
+        curr_x += run
+        curr_y += rise
+
+    return None
 
 
 def is_inbounds(my_x, my_y):
@@ -42,7 +58,72 @@ def is_inbounds(my_x, my_y):
     return True
 
 
-def asteroids_left(asteroid_map):
+def destroy_asteroid(asteroid):
+    if asteroid is not None:
+        asteroid_map[asteroid[0]][asteroid[1]] = '.'
+        destroyed_asteroids.append((asteroid[0], asteroid[1]))
+
+
+def search_for_asteroids(x, y):
+
+    # no x, negative y
+    asteroid = search_slope(0, -1, x, y)
+    destroy_asteroid(asteroid)
+
+    # positive x, negative y
+    for slope in positive_x_negative_y_slopes:
+        asteroid = search_slope(slope[0], slope[1], x, y)
+        destroy_asteroid(asteroid)
+
+    # positive x, no y
+    asteroid = search_slope(1, 0, x, y)
+    destroy_asteroid(asteroid)
+
+    # positive x, positive y
+    for slope in positive_x_positive_y_slopes:
+        asteroid = search_slope(slope[0], slope[1], x, y)
+        destroy_asteroid(asteroid)
+
+    # no x, positive y
+    asteroid = search_slope(0, 1, x, y)
+    destroy_asteroid(asteroid)
+
+    # negative x, positive y
+    for slope in negative_x_positive_y_slopes:
+        asteroid = search_slope(slope[0], slope[1], x, y)
+        destroy_asteroid(asteroid)
+
+    # negative x, no y
+    asteroid = search_slope(-1, 0, x, y)
+    destroy_asteroid(asteroid)
+
+    # negative x, negative y
+    for slope in negative_x_negative_y_slopes:
+        asteroid = search_slope(slope[0], slope[1], x, y)
+        destroy_asteroid(asteroid)
+
+
+# get the slopes in the order we want to traverse them
+positive_x_negative_y_slopes = sorted(
+    positive_x_negative_y_slopes, key=lambda x: -x[2])
+positive_x_positive_y_slopes = sorted(
+    positive_x_positive_y_slopes, key=lambda x: x[2])
+negative_x_positive_y_slopes = sorted(
+    negative_x_positive_y_slopes, key=lambda x: -x[2])
+negative_x_negative_y_slopes = sorted(
+    negative_x_negative_y_slopes, key=lambda x: -x[2])
+
+all_slopes_in_counter_counter_clockwise = [(0, -1)]
+all_slopes_in_counter_counter_clockwise.extend(positive_x_negative_y_slopes)
+all_slopes_in_counter_counter_clockwise.append((1, 0))
+all_slopes_in_counter_counter_clockwise.extend(positive_x_positive_y_slopes)
+all_slopes_in_counter_counter_clockwise.append((0, 1))
+all_slopes_in_counter_counter_clockwise.extend(negative_x_positive_y_slopes)
+all_slopes_in_counter_counter_clockwise.append((-1, 0))
+all_slopes_in_counter_counter_clockwise.extend(negative_x_negative_y_slopes)
+
+
+def asteroids_left():
     for row in asteroid_map:
         if '#' in row:
             return True
@@ -50,116 +131,11 @@ def asteroids_left(asteroid_map):
     return False
 
 
-destroyed_asteroids = []
+my_asteroid_x = 11
+my_asteroid_y = 11
+asteroid_map[my_asteroid_x][my_asteroid_y] = '.'
 
-x = 11
-y = 13
-
-while(asteroids_left(asteroid_map)):
-    # GO UP
-    curr_x = x
-    curr_y = y - 1
-    while (is_inbounds(curr_x, curr_y)):
-        if asteroid_map[curr_x][curr_y] == '#':
-            destroyed_asteroids.append((curr_x, curr_y))
-            asteroid_map[curr_x][curr_y] = '.'
-            break
-        curr_y -= 1
-
-    # go through slopes
-    # right side of map
-    for slope in slopes:
-        run = slope[0]
-        rise = slope[1]
-
-        if slope[2] > 0:
-            # go down positive ones
-            curr_x = x - run
-            curr_y = y - rise
-
-            while(is_inbounds(curr_x, curr_y)):
-                if asteroid_map[curr_x][curr_y] == '#':
-                    destroyed_asteroids.append((curr_x, curr_y))
-                    asteroid_map[curr_x][curr_y] = '.'
-                    break
-                curr_x -= run
-                curr_y -= rise
-
-        elif slope[2] == 0:
-            # go right
-            curr_x = x + 1
-            curr_y = y
-
-            while (is_inbounds(curr_x, curr_y)):
-                if asteroid_map[curr_x][curr_y] == '#':
-                    destroyed_asteroids.append((curr_x, curr_y))
-                    asteroid_map[curr_x][curr_y] = '.'
-                    break
-                curr_x += 1
-
-        elif slope[2] < 0:
-            # go down the negative slopes
-            curr_x = x - run
-            curr_y = y - rise
-
-            while(is_inbounds(curr_x, curr_y)):
-                if asteroid_map[curr_x][curr_y] == '#':
-                    destroyed_asteroids.append((curr_x, curr_y))
-                    asteroid_map[curr_x][curr_y] = '.'
-                    break
-                curr_x -= run
-                curr_y -= rise
-
-    # go down
-    curr_x = x
-    curr_y = y + 1
-    while (is_inbounds(curr_x, curr_y)):
-        if asteroid_map[curr_x][curr_y] == '#':
-            destroyed_asteroids.append((curr_x, curr_y))
-            asteroid_map[curr_x][curr_y] = '.'
-            break
-        curr_y += 1
-
-    # left side of map
-    for slope in slopes:
-        run = slope[0]
-        rise = slope[1]
-
-        if (slope[2] > 0):
-            # go up positive slopes
-            curr_x = x + run
-            curr_y = y + rise
-
-            while(is_inbounds(curr_x, curr_y)):
-                if asteroid_map[curr_x][curr_y] == '#':
-                    destroyed_asteroids.append((curr_x, curr_y))
-                    asteroid_map[curr_x][curr_y] = '.'
-                    break
-                curr_x += run
-                curr_y += rise
-
-        elif (slope[2] == 0):
-            # go left
-            curr_x = x - 1
-            curr_y = y
-            while (is_inbounds(curr_x, curr_y)):
-                if asteroid_map[curr_x][curr_y] == '#':
-                    destroyed_asteroids.append((curr_x, curr_y))
-                    asteroid_map[curr_x][curr_y] = '.'
-                    break
-                curr_x -= 1
-
-        elif (slope[2] < 0):
-            # go up negative slopes
-            curr_x = x + run
-            curr_y = y + rise
-
-            while(is_inbounds(curr_x, curr_y)):
-                if asteroid_map[curr_x][curr_y] == '#':
-                    destroyed_asteroids.append((curr_x, curr_y))
-                    asteroid_map[curr_x][curr_y] = '.'
-                    break
-                curr_x += run
-                curr_y += rise
+while(asteroids_left()):
+    search_for_asteroids(my_asteroid_x, my_asteroid_y)
 
 print(destroyed_asteroids[199])
