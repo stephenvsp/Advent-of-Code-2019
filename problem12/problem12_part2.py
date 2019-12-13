@@ -73,74 +73,44 @@ def moon_list_to_tuple_by_axis(i):
     return (moon1_tuple, moon2_tuple, moon3_tuple, moon4_tuple)
 
 
-x_cycle_time = 0
+def find_cycle_time_for_axis(axis):
+    cycle_time = 0
 
-x_position_map = {}
+    position_map = {}
 
-# calculate cycle time of LCM
-while(True):
+    # calculate cycle time of LCM
+    while(True):
 
-    curr_x_position = moon_list_to_tuple_by_axis(0)
+        position = moon_list_to_tuple_by_axis(axis)
 
-    if curr_x_position in x_position_map:
-        break
-    else:
-        x_position_map[curr_x_position] = True
-        x_cycle_time += 1
+        if position in position_map:
+            return cycle_time
+        else:
+            position_map[position] = True
+            cycle_time += 1
 
-    for i in range(0, len(moons) - 1):
-        for j in range(i + 1, len(moons)):
-            update_moon_pair_velocity(moons[i], moons[j])
+        for i in range(0, len(moons) - 1):
+            for j in range(i + 1, len(moons)):
+                update_moon_pair_velocity(moons[i], moons[j])
 
-    apply_velocity()
+        apply_velocity()
 
-y_cycle_time = 0
 
-y_position_map = {}
+# because each axis is independent need to find the time it takes for one axis to go back to its original state
+x_cycle_time = find_cycle_time_for_axis(0)
+y_cycle_time = find_cycle_time_for_axis(1)
+z_cycle_time = find_cycle_time_for_axis(2)
 
-# calculate cycle time of LCM
-while(True):
-
-    curr_y_position = moon_list_to_tuple_by_axis(1)
-
-    if curr_y_position in y_position_map:
-        break
-    else:
-        y_position_map[curr_y_position] = True
-        y_cycle_time += 1
-
-    for i in range(0, len(moons) - 1):
-        for j in range(i + 1, len(moons)):
-            update_moon_pair_velocity(moons[i], moons[j])
-
-    apply_velocity()
-
-z_cycle_time = 0
-
-z_position_map = {}
-
-# calculate cycle time of LCM
-while(True):
-
-    curr_z_position = moon_list_to_tuple_by_axis(2)
-
-    if curr_z_position in z_position_map:
-        break
-    else:
-        z_position_map[curr_z_position] = True
-        z_cycle_time += 1
-
-    for i in range(0, len(moons) - 1):
-        for j in range(i + 1, len(moons)):
-            update_moon_pair_velocity(moons[i], moons[j])
-
-    apply_velocity()
+print(x_cycle_time)
+print(y_cycle_time)
+print(z_cycle_time)
 
 
 def lcm(a, b):
     return abs(a*b) // math.gcd(a, b)
 
 
+# lcm of all these numbers is the time it takes for it to go back to an original state
 lcm = lcm(lcm(x_cycle_time, y_cycle_time), z_cycle_time)
 
 print(lcm)
