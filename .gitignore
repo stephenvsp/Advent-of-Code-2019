@@ -6,3 +6,5 @@ bash.exe.stackdump
 *.pyc
 .vscode/.ropeproject/config.py
 .vscode/.ropeproject/objectdb
+.idea
+.xml
