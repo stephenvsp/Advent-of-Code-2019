@@ -43,4 +43,16 @@ def quantity(element: str = 'ORE', fuel=1):
     return q
 
 
-print(quantity('ORE', 1))
+ORE_MAX = 1000000000000
+min_fuel = 1
+max_fuel = 100000000
+
+while (max_fuel - min_fuel) > 1:
+    m = (min_fuel + max_fuel) // 2
+
+    if quantity(fuel=m) <= ORE_MAX:
+        min_fuel = m
+    else:
+        max_fuel = m
+
+print(min_fuel)
