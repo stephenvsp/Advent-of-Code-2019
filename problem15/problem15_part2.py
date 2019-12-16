@@ -57,7 +57,7 @@ rb = 0
 direction_to_move = -1
 back_track = False
 
-while found_life_supply is False:
+while found_life_supply is False or position_stack != []:
     #decide which way to move
     #check if we haven't been there, if not go there
     #always in order N S W E
@@ -90,17 +90,58 @@ while found_life_supply is False:
         #push current space onto stack
         if not back_track:
             position_stack.insert(0, (curr_x, curr_y))
-            back_track = False
+        else: 
+            position_stack.pop(0)
 
         curr_x, curr_y = move_direction(direction_to_move)
 
-        if back_track:
-            position_stack.pop(0)
 
         if output == 1:
             ship_map[(curr_x, curr_y)] = '.'
         else:
             ship_map[(curr_x, curr_y)] = 'O'
-            print(curr_x, curr_y)
-            print(len(position_stack))
             found_life_supply = True
+
+
+def space_without_oxygen():
+    for key in ship_map:
+        if ship_map[key] == '.':
+            return True
+
+    return False
+
+count = 0
+
+def surrounding_space_has_oxygen(position):
+    x, y = position
+
+    if (x, y - 1) in ship_map:
+        if ship_map[(x, y - 1)] == 'O':
+            return True
+
+    if (x, y + 1) in ship_map:
+        if ship_map[(x, y + 1)] == 'O':
+            return True
+
+    if (x - 1, y) in ship_map:
+        if ship_map[(x - 1, y)] == 'O':
+            return True
+
+    if (x + 1, y) in ship_map:
+        if ship_map[(x + 1, y)] == 'O':
+            return True
+
+    return False
+
+while space_without_oxygen():
+    temp_ship_map = ship_map.copy()
+
+    for key in temp_ship_map:
+        if temp_ship_map[key] == '.':
+            if surrounding_space_has_oxygen(key):
+                temp_ship_map[key] = 'O'
+
+    ship_map = temp_ship_map
+    count += 1
+
+print(count)
