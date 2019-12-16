@@ -104,10 +104,3 @@ while found_life_supply is False:
             print(curr_x, curr_y)
             print(len(position_stack))
             found_life_supply = True
-
-
-
-
-
-
-
