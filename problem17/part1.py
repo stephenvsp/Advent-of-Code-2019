@@ -46,10 +46,3 @@ for coord in ship_map:
         sum_of_intersections += coord[0] * coord[1]
 
 print(sum_of_intersections)
-
-
-#for j in range(1, 50):
-#    line = ''
-#    for i in range(1, 52):
-#        line += ship_map[(i, j)]
-#    print(line)
