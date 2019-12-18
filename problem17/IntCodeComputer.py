@@ -4,7 +4,7 @@ program = [3,1033,1008,1033,1,1032,1005,1032,31,1008,1033,2,1032,1005,1032,58,10
 def run_program(int_code, inputs=[], loop=False, pc=0, rb=0):
 
     outputs = []
-    inputs = []
+    inputs = inputs
     pc = pc
     relative_base = rb
 
