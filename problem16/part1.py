@@ -17,7 +17,11 @@ test_input3 = '69317163492948606335995924319873'
 #ans = 34040438 after 2 phases
 test_input4 = '12345678'
 
+patterns = []
 
+num_phases = 100
+
+sequence = initial_sequence
 
 def generate_pattern(i, sequence):
     #first generate pattern for phase number
@@ -35,16 +39,15 @@ def generate_pattern(i, sequence):
 
     return pattern[:len(sequence)] 
 
-num_phases = 100
-
-sequence = initial_sequence
+for i in range(0, len(sequence)):
+    patterns.append(generate_pattern(i, sequence))
 
 for i in range(0, num_phases):
 
     new_sequence = ''
     for j in range(0, len(sequence)):
         
-        pattern = generate_pattern(j, sequence)
+        pattern = patterns[j]
 
         multiply_lists = [int(a) * b for a, b in zip(sequence, pattern)]
 
