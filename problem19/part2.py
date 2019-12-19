@@ -5,20 +5,18 @@ program = [109,424,203,1,21101,0,11,0,1105,1,282,21101,18,0,0,1105,1,259,2101,0,
 x = 0
 y = 0
 
-program_copy = program.copy()
+def check_coord(x, y):
+    program_copy = program.copy()
 
-while not run_program(program_copy, [x + 99, y]):
+    return run_program(program_copy, [x, y])
+
+
+while not check_coord(x + 99, y):
     y += 1
 
-    program_copy = program.copy()
-
-    if not run_program(program_copy, [x, y + 99]):
+    if not check_coord(x, y + 99):
         x += 1
-    
-    program_copy = program.copy()
 
-print(x)
-print(y)
 
 print(x*10000 + y)
 
