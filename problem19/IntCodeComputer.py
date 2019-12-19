@@ -1,6 +1,6 @@
 def run_program(int_code, inputs=[], loop=False, pc=0, rb=0):
 
-    outputs = []
+    output = 0
     inputs = inputs
     pc = pc
     relative_base = rb
@@ -65,12 +65,12 @@ def run_program(int_code, inputs=[], loop=False, pc=0, rb=0):
         elif (op == 4):
             output_val = get_value(pc + 1, modes[0])
 
-            outputs.append(output_val)
+            output = output_val
 
             increment = 2
 
             if loop:
-                return outputs, pc + increment, relative_base
+                return output, pc + increment, relative_base
 
         # 5 - jump if true
         elif (op == 5):
@@ -123,9 +123,9 @@ def run_program(int_code, inputs=[], loop=False, pc=0, rb=0):
         # 99 - halt
         elif (op == 99):
             if loop:
-                return outputs, None, None
+                return output, None, None
             else:
-                return outputs
+                return output
 
         else:
             print('you done fucked up')
@@ -134,6 +134,6 @@ def run_program(int_code, inputs=[], loop=False, pc=0, rb=0):
         pc += increment
 
     if loop:
-        return outputs, None, None
+        return output, None, None
     else: 
-        return outputs
+        return output
