@@ -1,5 +1,5 @@
 import unittest
-from part1 import shuffle
+from part2 import shuffle
 
 class TestProblem22(unittest.TestCase):
 
